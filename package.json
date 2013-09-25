@@ -1,0 +1,14 @@
+{
+    "name": "MagicDB",
+    "version": "0.0.1",
+    "author": "Andrew Bernstein <andrewlbernstein@gmail.com>",
+    "description": "A site for storing magic card collections",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:cloudofstrife/magicdb.git"
+    }                                     ,
+    "dependencies": {
+        "express": "*",
+        "mongodb": "*"
+    }
+}
