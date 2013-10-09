@@ -3,22 +3,71 @@ var config = require('config');
 var Keywords = require('./KeywordsController');
 
 var importCards = function() {
-    MongoService.connect(function(db) {
-        var rawCardsCollection = db.collection('rawCards');
-        var cards = require('../' + config.functions.cardFile);
-        for(var i in cards) {
-            var card = cards[i];
-            updateCard(rawCardsCollection, card);
-        }
-    });
+	var importedCards = [];
+	MongoService.connect(function(db) {
+		var rawCardsCollection = db.collection('rawCards');
+		var cards = require('../' + config.functions.cardFile);
+		for(var i in cards) {
+			var card = cards[i];
+			if(importedCards.indexOf(card.name) == -1) {
+				updateCard(rawCardsCollection, card);
+				importedCards.push(card.name)
+			}
+			else {
+				addSet(rawCardsCollection, card);
+			}
+		}
+	});
 }
 exports.importCards = importCards;
 
 var updateCard = function(collection, card) {
 	formatCard(card);
-	collection.update({ Id: card.Id }, card, { upsert: true }, function(err, docs) {
-		console.log('imported card', card.name);
+	collection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
+		console.log('imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
 	});
+}
+
+var addSet = function(collection, card) {
+	var printing = getPrinting(card);
+	collection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, function(err) {
+		if(err) {
+			console.log(err);
+		}
+		else {
+			console.log('added set ' + printing.card_set_id + ' to card ' + card.name);
+		}
+	});
+}
+
+var printingAttributes = [
+	'Id',
+	'artist',
+	'card_image',
+	'card_set_name',
+	'card_set_id',
+	'flavor',
+	'rarity',
+	'released_at',
+	'set_number'
+];
+
+var getPrinting = function(card) {
+	var printing = {};
+
+	for(var pKey in printingAttributes) {
+		var pAttribute = printingAttributes[pKey];
+		printing[pAttribute] = card[pAttribute];
+	}
+
+	return printing;
+}
+
+var deletePrintingInformation = function(card) {
+	for(var pKey in printingAttributes) {
+		var pAttribute = printingAttributes[pKey];
+		delete card[pAttribute];
+	}
 }
 
 var formatCard = function(card) {
@@ -26,13 +75,19 @@ var formatCard = function(card) {
 	card.lcaseName = card.name.toLowerCase();
 	card.lcaseType = card.type.toLowerCase();
 	card.lcaseDescription = card.description.toLowerCase();
-	card.lcaseRarity = card.rarity.toLowerCase();
+
+	//pull out values that are not unique to this printing of the card and put them in arrays
+	card.printings = [];
+
+	var printing = getPrinting(card);
+	card.printings.push(printing);
+	deletePrintingInformation(card);
 
 	//start assembling the tags
 	card.tags = [];
 
 	//put the name in to the tags
-	var splitName = card.lcaseName.split(' ')
+	var splitName = card.lcaseName.split(' ');
 	for(var nameKey in splitName) {
 		card.tags.push(splitName[nameKey]);
 	}
@@ -53,8 +108,4 @@ var formatCard = function(card) {
 	for(var cKey in card.colors) {
 		card.tags.push(card.colors[cKey].toLowerCase());
 	}
-}
-
-var getKeywordsFromDescription = function(description) {
-	var abilities = Keywords.getAbilities();
 }

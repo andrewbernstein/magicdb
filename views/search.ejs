@@ -1,0 +1,19 @@
+<% include header.ejs %>
+
+Search Page
+<br />
+<form action="/search" method="POST">
+	Search:
+	<input type="text" name="query" />
+	<input type="submit" name="Search" />
+</form>
+
+<div class="searchResults">
+	<% if(typeof(results) != 'undefined') { %>
+		<% for( var rKey in results ) { %>
+			<% var card = results[rKey] %>
+			<% include card.ejs %>
+		<% } %>
+	<% } %>
+</div>
+<% include footer.ejs %>

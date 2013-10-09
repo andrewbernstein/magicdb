@@ -5,8 +5,11 @@
         "database": "test"
     },
     "functions": {
-        "importCards": true,
+        "importCards": false,
         "cardFile": "cards.json",
-        "runServer": false
-    }
+        "runServer": true
+    },
+	"server": {
+		"port": 8080
+	}
 }

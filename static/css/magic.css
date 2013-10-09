@@ -1,0 +1,57 @@
+.card {
+	height: 500px;
+}
+
+.cardprintings {
+
+}
+
+.cardprinting {
+	float:left;
+	width: 300px;
+}
+
+.cardimage {
+
+}
+
+.cardprintingattribute {
+	width: 300px;
+	position: relative;
+}
+
+.cardprintingtitle {
+	text-align: right;
+	font-weight: bold;
+	width: 120px;
+	float: left;
+}
+
+.cardprintingvalue {
+	width: 170px;
+	float: left;
+	margin-left: 8px
+}
+
+.cardinfo {
+	float: left;
+	margin-top: 20px;
+}
+
+.cardattribute {
+	width: 510px;
+	position: relative;
+}
+
+.cardtitle {
+	text-align: right;
+	font-weight: bold;
+	width: 160px;
+	float: left;
+}
+
+.cardvalue {
+	width: 340px;
+	float: left;
+	margin-left: 8px
+}
