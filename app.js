@@ -11,6 +11,18 @@ if(config.functions.importCards) {
     CardImportController.importCards();
 }
 
+if(config.functions.scrapeCardImages) {
+	console.log('scraping card images!');
+	var CardImageScraper = require('./scrapers/CardImageScraper');
+	CardImageScraper.scrapeCards();
+}
+
+if(config.functions.scrapeSetImages) {
+	console.log('scraping set images!');
+	var SetIconScraper = require('./scrapers/SetIconScraper');
+	SetIconScraper.scrapeCards();
+}
+
 if(config.functions.runServer) {
     var app = express();
 	app.engine('.ejs', ejs.__express);

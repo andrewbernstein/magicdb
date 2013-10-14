@@ -4,39 +4,66 @@ var Keywords = require('./KeywordsController');
 
 var importCards = function() {
 	var importedCards = [];
+	var importedSets = [];
 	MongoService.connect(function(db) {
 		var rawCardsCollection = db.collection('rawCards');
+		var cardsCollection = db.collection('cards');
+		var setsCollection = db.collection('sets');
 		var cards = require('../' + config.functions.cardFile);
 		for(var i in cards) {
 			var card = cards[i];
+			//if we haven't seen this set before, insert it in to the database
+			if(importedSets.indexOf(card.card_set_id) == -1) {
+				upsertSet(setsCollection, card.card_set_name, card.card_set_id);
+				importedSets.push(card.card_set_id);
+			}
+
+			//add/update card to the raw card collection
+			upsertRawCard(rawCardsCollection, card);
+
+			//if we haven't seen this card before (same name is same card), upsert the base card in to the db
 			if(importedCards.indexOf(card.name) == -1) {
-				updateCard(rawCardsCollection, card);
+				upsertCard(cardsCollection, card);
 				importedCards.push(card.name)
 			}
+			//if we've seen the card, add another printing to it
 			else {
-				addSet(rawCardsCollection, card);
+				addPrintingToCard(cardsCollection, card);
 			}
 		}
 	});
 }
 exports.importCards = importCards;
 
-var updateCard = function(collection, card) {
+var upsertCard = function(dbCollection, card) {
 	formatCard(card);
-	collection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
-		console.log('imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
+	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
+		console.log('format imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
 	});
 }
 
-var addSet = function(collection, card) {
+var upsertRawCard = function(dbCollection, card) {
+	dbCollection.update({ Id: card.Id }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
+		console.log('raw imported set ' + card.card_set_id + ' card ' + card.name);
+	});
+}
+
+var addPrintingToCard = function(dbCollection, card) {
 	var printing = getPrinting(card);
-	collection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, function(err) {
+	dbCollection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, function(err) {
 		if(err) {
 			console.log(err);
 		}
 		else {
 			console.log('added set ' + printing.card_set_id + ' to card ' + card.name);
 		}
+	});
+}
+
+var upsertSet = function(dbCollection, name, abbreviation) {
+	var set = { name: name, abbreviation: abbreviation };
+	dbCollection.update({ name: name }, { $set : set }, { upsert: true, safe: true }, function(err, docs) {
+		console.log('added set ' + name + ' to database');
 	});
 }
 

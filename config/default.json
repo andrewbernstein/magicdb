@@ -7,9 +7,16 @@
     "functions": {
         "importCards": false,
         "cardFile": "cards.json",
-        "runServer": true
+        "runServer": false,
+		"scrapeCardImages": false,
+		"scrapeSetImages" : true
     },
 	"server": {
 		"port": 8080
+	},
+	"s3": {
+		"cardBucket": "magicdb-cards",
+		"iconBucket": "magicdb-icons",
+		"bucketLocation": "http://s3-us-west-2.amazonaws.com/"
 	}
 }
