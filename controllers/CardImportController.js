@@ -87,6 +87,8 @@ var getPrinting = function(card) {
 		printing[pAttribute] = card[pAttribute];
 	}
 
+	updateSetAbbreviation(printing);
+
 	return printing;
 }
 
@@ -94,6 +96,18 @@ var deletePrintingInformation = function(card) {
 	for(var pKey in printingAttributes) {
 		var pAttribute = printingAttributes[pKey];
 		delete card[pAttribute];
+	}
+}
+
+/*
+	For some reason, mtgdb.info's set abbreviations (the card_set_id) don't match the gatherer set abbreviations
+	(I think because mtgdb.info wants all abbreviations to have three characters, not all gatherer ones do),
+	so update the set abbreviations to match gatherer's.
+ */
+var updateSetAbbreviation = function(printing) {
+	var setReplacements = Keywords.getSetReplacements();
+	if(setReplacements.hasOwnProperty(printing.card_set_id)) {
+		printing.card_set_id = setReplacements.hasOwnProperty(printing.card_set_id);
 	}
 }
 
