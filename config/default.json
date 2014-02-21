@@ -1,16 +1,16 @@
 {
-    "mongo": {
-        "address": "127.0.0.1",
-        "port": 27017,
-        "database": "test"
-    },
-    "functions": {
-        "importCards": false,
-        "cardFile": "cards.json",
-        "runServer": false,
+	"mongo": {
+		"address": "127.0.0.1",
+		"port": 27017,
+		"database": "test"
+	},
+	"functions": {
+		"importCards": false,
+		"cardFile": "cards.json",
+		"runServer": true,
 		"scrapeCardImages": false,
-		"scrapeSetImages" : true
-    },
+		"scrapeSetImages" : false
+	},
 	"server": {
 		"port": 8080
 	},
