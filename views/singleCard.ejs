@@ -1,0 +1,14 @@
+<% include header.ejs %>
+
+Card
+
+<div class="searchResults">
+	<% if(typeof(results) != 'undefined') { %>
+		<% for( var rKey in results ) { %>
+			<% var card = results[rKey] %>
+			<% include cardDetail.ejs %>
+			<% } %>
+	<% } %>
+</div>
+
+<% include footer.ejs %>

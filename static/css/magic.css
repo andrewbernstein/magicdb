@@ -1,5 +1,8 @@
 .card {
 	height: 500px;
+	width: 300px;
+	display: inline-block;
+	vertical-align: top;
 }
 
 .cardprintings {
@@ -7,7 +10,8 @@
 }
 
 .cardprinting {
-	float:left;
+	display: inline-block;
+	vertical-align: top;
 	width: 300px;
 }
 
@@ -44,14 +48,14 @@
 }
 
 .cardtitle {
+	display: inline-block;
 	text-align: right;
 	font-weight: bold;
-	width: 160px;
-	float: left;
+	width: 70px;
 }
 
 .cardvalue {
-	width: 340px;
-	float: left;
+	display: inline-block;
+	width: 230px;
 	margin-left: 8px
 }
