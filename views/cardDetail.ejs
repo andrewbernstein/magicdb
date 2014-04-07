@@ -1,64 +1,71 @@
-<div class="card">
-	<div class="cardprintings">
+<div class="carddetail">
+	<div class="cardimageandinfo">
+		<div class="cardprintings">
+			<div class="cardimages">
+				<% for(var pKey in card.printings) {%>
+					<% var printing = card.printings[pKey] %>
+					<div class="cardimage" data-set="<%= printing.card_set_name %>" >
+						<a href="/card/<%= card.name %>">
+							<img src="<%= printing.card_image %>" />
+						</a>
+						<div class="cardprintingattribute">
+							<div class="cardprintingtitle">Expansion:</div>
+							<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
+						</div>
+						<div class="cardprintingattribute">
+							<div class="cardprintingtitle">Rarity:</div>
+							<div class="cardprintingvalue"><%= printing.rarity %></div>
+						</div>
+						<div class="cardprintingattribute">
+							<div class="cardprintingtitle">Card Number:</div>
+							<div class="cardprintingvalue"><%= printing.set_number %></div>
+						</div>
+					</div>
+				<% } %>
+			</div>
+		</div>
+		<div class="cardinfo">
+			<div class="cardattribute">
+				<div class="cardtitle">Name:</div>
+				<div class="cardvalue"><%= card.name %></div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Cost:</div>
+				<div class="cardvalue"><%= card.manacost %></div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">CMC:</div>
+				<div class="cardvalue"><%= card.convertedmanacost %></div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Type:</div>
+				<div class="cardvalue"><%= card.type? card.type: card.types %></div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Text:</div>
+				<div class="cardvalue"><%= card.description %></div>
+			</div>
+			<% if(card.type.indexOf('Creature') != -1) { %>
+			<div class="cardattribute">
+				<div class="cardtitle">P/T:</div>
+				<div class="cardvalue"><%= card.power %> / <%= card.toughness %></div>
+			</div>
+			<% } %>
+		</div>
+	</div>
+	<div class="cardprintinglist">
+		<div class="cardprintingtitle">
+			Card Printings
+		</div>
 		<% for(var pKey in card.printings) {%>
 			<% var printing = card.printings[pKey] %>
 			<div class="cardprinting">
+
 				<div class="cardprintingattribute cardprintingset" data-set="<%= printing.card_set_name %>">
 					<div class="cardprintingtitle">Expansion:</div>
 					<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
 				</div>
 			</div>
-		<% } %>
-		<div class="cardimages">
-			<% for(var pKey in card.printings) {%>
-				<% var printing = card.printings[pKey] %>
-				<div class="cardimage" data-set="<%= printing.card_set_name %>" >
-					<a href="/card/<%= card.name %>">
-						<img src="<%= printing.card_image %>" />
-					</a>
-					<div class="cardprintingattribute">
-						<div class="cardprintingtitle">Expansion:</div>
-						<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
-					</div>
-					<div class="cardprintingattribute">
-						<div class="cardprintingtitle">Rarity:</div>
-						<div class="cardprintingvalue"><%= printing.rarity %></div>
-					</div>
-					<div class="cardprintingattribute">
-						<div class="cardprintingtitle">Card Number:</div>
-						<div class="cardprintingvalue"><%= printing.set_number %></div>
-					</div>
-				</div>
-			<% } %>
-		</div>
-
-	</div>
-	<div class="cardinfo">
-		<div class="cardattribute">
-			<div class="cardtitle">Name:</div>
-			<div class="cardvalue"><%= card.name %></div>
-		</div>
-		<div class="cardattribute">
-			<div class="cardtitle">Cost:</div>
-			<div class="cardvalue"><%= card.manacost %></div>
-		</div>
-		<div class="cardattribute">
-			<div class="cardtitle">CMC:</div>
-			<div class="cardvalue"><%= card.convertedmanacost %></div>
-		</div>
-		<div class="cardattribute">
-			<div class="cardtitle">Type:</div>
-			<div class="cardvalue"><%= card.type? card.type: card.types %></div>
-		</div>
-		<div class="cardattribute">
-			<div class="cardtitle">Text:</div>
-			<div class="cardvalue"><%= card.description %></div>
-		</div>
-		<% if(card.type.indexOf('Creature') != -1) { %>
-		<div class="cardattribute">
-			<div class="cardtitle">P/T:</div>
-			<div class="cardvalue"><%= card.power %> / <%= card.toughness %></div>
-		</div>
 		<% } %>
 	</div>
 </div>

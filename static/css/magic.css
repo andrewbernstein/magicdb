@@ -4,14 +4,32 @@
 	vertical-align: top;
 }
 
-.cardprintings {
+.carddetail {
+	width: 800px;
+}
 
+.cardprintings {
+	display: inline-block;
+}
+
+.cardprintinglist {
+	float: left;
+	width: 300px;
 }
 
 .cardprinting {
 	display: inline-block;
 	vertical-align: top;
 	width: 300px;
+}
+
+.cardimageandinfo {
+	float: left;
+	width: 400px;
+}
+
+.cardimages {
+
 }
 
 .cardimage {
