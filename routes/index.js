@@ -7,5 +7,6 @@ var addRoutes = function(app) {
 	app.post('/search', SiteController.searchPost);
 
 	app.get('/card/:cardName', SiteController.cardGet);
+	app.get('/set/:setName', SiteController.setGet);
 }
 exports.addRoutes = addRoutes;

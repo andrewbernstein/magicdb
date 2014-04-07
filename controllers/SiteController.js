@@ -30,3 +30,12 @@ var cardGet = function(req, res) {
 	});
 };
 exports.cardGet = cardGet;
+
+var setGet = function(req, res) {
+	var setName = decodeURIComponent(req.params.setName);
+	CardController.getSet(setName, function(results) {
+		console.log(results);
+		res.render('search', { results: results });
+	});
+}
+exports.setGet = setGet;
