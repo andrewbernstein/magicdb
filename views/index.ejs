@@ -3,4 +3,12 @@
 Index Page
 <br />
 
+<% for (var sKey in sets) { %>
+<div class="setname">
+	<a href = '/set/<%= sets[sKey] %>'>
+		<%= sets[sKey] %>
+	</a>
+</div>
+<% } %>
+
 <% include footer.ejs %>
