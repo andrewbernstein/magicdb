@@ -27,4 +27,4 @@ exports.getSetAbrreviations = getSetAbbreviations;
 var getSetReplacements = function() {
 	return setReplacements;
 }
-exports.getSetReplacements = getSetReplacements();
+exports.getSetReplacements = getSetReplacements;
