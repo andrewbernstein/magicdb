@@ -5,7 +5,6 @@
 		"database": "test"
 	},
 	"functions": {
-		"importCards": false,
 		"cardFile": "cards.json",
 		"runServer": true,
 		"scrapeCardImages": false,
