@@ -38,13 +38,13 @@ exports.importCards = importCards;
 var upsertCard = function(dbCollection, card) {
 	formatCard(card);
 	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
-		console.log('format imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
+		//console.log('format imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
 	});
 }
 
 var upsertRawCard = function(dbCollection, card) {
 	dbCollection.update({ Id: card.Id }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
-		console.log('raw imported set ' + card.card_set_id + ' card ' + card.name);
+		//console.log('raw imported set ' + card.card_set_id + ' card ' + card.name);
 	});
 }
 
@@ -55,7 +55,7 @@ var addPrintingToCard = function(dbCollection, card) {
 			console.log(err);
 		}
 		else {
-			console.log('added set ' + printing.card_set_id + ' to card ' + card.name);
+			//console.log('added set ' + printing.card_set_id + ' to card ' + card.name);
 		}
 	});
 }
@@ -63,7 +63,7 @@ var addPrintingToCard = function(dbCollection, card) {
 var upsertSet = function(dbCollection, name, abbreviation) {
 	var set = { name: name, abbreviation: abbreviation };
 	dbCollection.update({ name: name }, { $set : set }, { upsert: true, safe: true }, function(err, docs) {
-		console.log('added set ' + name + ' to database');
+		//console.log('added set ' + name + ' to database');
 	});
 }
 
@@ -131,9 +131,15 @@ var formatCard = function(card) {
 	var splitName = card.lcaseName.split(' ');
 	for(var nameKey in splitName) {
 		var namePart = splitName[nameKey];
+
 		//put the base name in to tags
 		card.tags.push(namePart);
 
+		//strip out commas so "Elspeth" ends up in the tags for "Elspeth, Sun's Champion"
+		namePart = namePartnamePart = namePart.replace(/,/g, '');
+		card.tags.push(namePart);
+
+		/*
 		//attempt to deal with plurals
 		if(namePart[namePart.length - 1] == 's') {
 			//there are a lot of elves, let's make it easier to search for them
@@ -144,6 +150,7 @@ var formatCard = function(card) {
 				card.tags.push(namePart.slice(0, namePart.length - 1));
 			}
 		}
+		*/
 	}
 
 
