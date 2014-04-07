@@ -130,8 +130,23 @@ var formatCard = function(card) {
 	//put the name in to the tags
 	var splitName = card.lcaseName.split(' ');
 	for(var nameKey in splitName) {
-		card.tags.push(splitName[nameKey]);
+		var namePart = splitName[nameKey];
+		//put the base name in to tags
+		card.tags.push(namePart);
+
+		//attempt to deal with plurals
+		if(namePart[namePart.length - 1] == 's') {
+			//there are a lot of elves, let's make it easier to search for them
+			if(namePart == 'elves') {
+				card.tags.push('elf');
+			}
+			else {
+				card.tags.push(namePart.slice(0, namePart.length - 1));
+			}
+		}
 	}
+
+
 
 	//if the description contains an ability, push it in to the tags
 	var abilities = Keywords.getAbilities();

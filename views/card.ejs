@@ -4,21 +4,9 @@
 			<% var printing = card.printings[pKey] %>
 			<div class="cardprinting">
 				<div class="cardimage">
-					<a href="/card/<%= card.name %>">
+					<a href="/card/<%= card.name %>" >
 						<img src="<%= printing.card_image %>" />
 					</a>
-				</div>
-				<div class="cardprintingattribute">
-					<div class="cardprintingtitle">Expansion:</div>
-					<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
-				</div>
-				<div class="cardprintingattribute">
-					<div class="cardprintingtitle">Rarity:</div>
-					<div class="cardprintingvalue"><%= printing.rarity %></div>
-				</div>
-				<div class="cardprintingattribute">
-					<div class="cardprintingtitle">Card Number:</div>
-					<div class="cardprintingvalue"><%= printing.set_number %></div>
 				</div>
 			</div>
 		<% } %>

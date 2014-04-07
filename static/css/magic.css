@@ -2,6 +2,8 @@
 	width: 300px;
 	display: inline-block;
 	vertical-align: top;
+	margin-right: 10px;
+	margin-bottom: 10px;
 }
 
 .carddetail {
@@ -33,7 +35,7 @@
 }
 
 .cardimage {
-
+	margin-left: 37px;
 }
 
 .cardprintingattribute {
@@ -60,7 +62,7 @@
 }
 
 .cardattribute {
-	width: 510px;
+	width: 320px;
 	position: relative;
 }
 
@@ -69,6 +71,7 @@
 	text-align: right;
 	font-weight: bold;
 	width: 70px;
+	vertical-align: top;
 }
 
 .cardvalue {
