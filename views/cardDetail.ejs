@@ -1,28 +1,37 @@
 <div class="card">
 	<div class="cardprintings">
-		<div class="cardprintingscount">
-			Number of printings: <%= card.printings.length %>
-		</div>
 		<% for(var pKey in card.printings) {%>
-		<% var printing = card.printings[pKey] %>
-		<div class="cardprinting">
-			<div class="cardimage">
-				<img src="<%= printing.card_image %>" />
+			<% var printing = card.printings[pKey] %>
+			<div class="cardprinting">
+				<div class="cardprintingattribute cardprintingset" data-set="<%= printing.card_set_name %>">
+					<div class="cardprintingtitle">Expansion:</div>
+					<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
+				</div>
 			</div>
-			<div class="cardprintingattribute">
-				<div class="cardprintingtitle">Expansion:</div>
-				<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
-			</div>
-			<div class="cardprintingattribute">
-				<div class="cardprintingtitle">Rarity:</div>
-				<div class="cardprintingvalue"><%= printing.rarity %></div>
-			</div>
-			<div class="cardprintingattribute">
-				<div class="cardprintingtitle">Card Number:</div>
-				<div class="cardprintingvalue"><%= printing.set_number %></div>
-			</div>
-		</div>
 		<% } %>
+		<div class="cardimages">
+			<% for(var pKey in card.printings) {%>
+				<% var printing = card.printings[pKey] %>
+				<div class="cardimage" data-set="<%= printing.card_set_name %>" >
+					<a href="/card/<%= card.name %>">
+						<img src="<%= printing.card_image %>" />
+					</a>
+					<div class="cardprintingattribute">
+						<div class="cardprintingtitle">Expansion:</div>
+						<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
+					</div>
+					<div class="cardprintingattribute">
+						<div class="cardprintingtitle">Rarity:</div>
+						<div class="cardprintingvalue"><%= printing.rarity %></div>
+					</div>
+					<div class="cardprintingattribute">
+						<div class="cardprintingtitle">Card Number:</div>
+						<div class="cardprintingvalue"><%= printing.set_number %></div>
+					</div>
+				</div>
+			<% } %>
+		</div>
+
 	</div>
 	<div class="cardinfo">
 		<div class="cardattribute">
@@ -53,3 +62,15 @@
 		<% } %>
 	</div>
 </div>
+
+<script>
+	$(document).ready(function() {
+		$('.cardimage').hide();
+		$('.cardimage').first().show();
+	});
+	$('.cardprintingset').click(function() {
+		var self = $(this);
+		$('.cardimage').hide();
+		$('.cardimage[data-set="' + self.data('set') +'"]').show();
+	});
+</script>
