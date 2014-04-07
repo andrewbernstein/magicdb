@@ -1,7 +1,6 @@
 <div class="card">
 	<div class="cardprintings">
-		<% for(var pKey in card.printings) {%>
-			<% var printing = card.printings[pKey] %>
+			<% var printing = card.printings[0] %>
 			<div class="cardprinting">
 				<div class="cardimage">
 					<a href="/card/<%= card.name %>" >
@@ -9,7 +8,6 @@
 					</a>
 				</div>
 			</div>
-		<% } %>
 	</div>
 	<div class="cardinfo">
 		<div class="cardattribute">
