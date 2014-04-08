@@ -3,6 +3,7 @@ var sets = require('./../keywords/sets.json');
 var abilities = require('./../keywords/abilities.json');
 var setAbbreviations = require('./../keywords/setAbbreviations.json');
 var setReplacements = require('./../keywords/setReplacements.json');
+var printingSets = require('./../keywords/printingSets.json');
 
 var getCardTypes = function() {
 	return cardTypes;
@@ -28,3 +29,8 @@ var getSetReplacements = function() {
 	return setReplacements;
 }
 exports.getSetReplacements = getSetReplacements;
+
+var getPrintingSets = function() {
+	return printingSets;
+}
+exports.getPrintingSets = getPrintingSets;

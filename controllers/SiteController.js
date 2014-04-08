@@ -4,7 +4,7 @@ var KeywordsController = require('./../controllers/KeywordsController');
 
 var indexGet = function(req, res) {
 	//TODO: Not all of these work!
-	var setAbbreviations = KeywordsController.getSetAbrreviations();
+	var setAbbreviations = KeywordsController.getPrintingSets();
 	res.render('index', {sets: setAbbreviations});
 };
 exports.indexGet = indexGet;
