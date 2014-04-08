@@ -16,13 +16,13 @@ var getSet = function(setName, callback) {
 	MongoService.connect(function(db) {
 		var ucaseName = setName.toUpperCase();
 		var rawCardsCollection = db.collection('cards');
-		rawCardsCollection.find({ "printings.card_set_id" : ucaseName },
-								{ printings: { $elemMatch: { card_set_id: ucaseName } },
-								  name: 1, convertedmanacost:1, manacost: 1, description: 1, type: 1, subtype: 1,
+		rawCardsCollection.find({ "printings.cardSetId" : ucaseName },
+								{ printings: { $elemMatch: { cardSetId : ucaseName } },
+								  name: 1, convertedManaCost:1, manaCost: 1, description: 1, type: 1, subtype: 1,
 								  power: 1, toughness: 1 }
 		).toArray(function(err, results) {
 			results.sort(function(a, b) {
-				if(a.printings[0].set_number < b.printings[0].set_number) {
+				if(a.printings[0].setNumber < b.printings[0].setNumber) {
 					return -1;
 				}
 				return 1;
