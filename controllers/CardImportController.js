@@ -91,7 +91,7 @@ var upsertSet = function(dbCollection, name, abbreviation, callback) {
 }
 
 var printingAttributes = [
-	'Id',
+	'id',
 	'artist',
 	'cardSetName',
 	'cardSetId',
