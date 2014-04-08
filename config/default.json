@@ -17,5 +17,8 @@
 		"cardBucket": "magicdb-cards",
 		"iconBucket": "magicdb-icons",
 		"bucketLocation": "http://s3-us-west-2.amazonaws.com/"
+	},
+	"images": {
+		"baseUrl": "http://api.mtgdb.info/content/card_images/"
 	}
 }

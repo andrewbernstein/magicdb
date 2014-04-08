@@ -6,7 +6,7 @@
 					<% var printing = card.printings[pKey] %>
 					<div class="cardimage" data-set="<%= printing.card_set_name %>" >
 						<a href="/card/<%= card.name %>">
-							<img src="<%= printing.card_image %>" />
+							<img src="<%= imageBaseUrl + printing.id + '.jpeg' %>" />
 						</a>
 						<div class="cardprintingattribute">
 							<div class="cardprintingtitle">Expansion:</div>
