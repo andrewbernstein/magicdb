@@ -1,6 +1,7 @@
 var MongoService = require('./../services/MongoService');
 var config = require('config');
 var Keywords = require('./KeywordsController');
+var async = require('async');
 
 var importCards = function() {
 	var importedCards = [];
@@ -10,73 +11,94 @@ var importCards = function() {
 		var cardsCollection = db.collection('cards');
 		var setsCollection = db.collection('sets');
 		var cards = require('../' + config.functions.cardFile);
+		console.log('finished reading card json');
+		var count = 0;
+		var cardsToInsert = [];
 		for(var i in cards) {
-			var card = cards[i];
-			//if we haven't seen this set before, insert it in to the database
-			if(importedSets.indexOf(card.card_set_id) == -1) {
-				upsertSet(setsCollection, card.card_set_name, card.card_set_id);
-				importedSets.push(card.card_set_id);
-			}
+			var aCard = cards[i];
+			//creating a closure here to avoid any conflicts with the card variable
+			(function(card) {
+				cardsToInsert.push(function(callback) {
+					async.series([
+						function(callback) {
+							//if we haven't seen this set before, insert it in to the database
+							if(importedSets.indexOf(card.card_set_id) == -1) {
+								importedSets.push(card.card_set_id);
+								upsertSet(setsCollection, card.card_set_name, card.card_set_id, callback);
+							}
+							else {
+								callback();
+							}
+						},
+						function(callback) {
+							//add/update card to the raw card collection
+							upsertRawCard(rawCardsCollection, card, callback);
+						},
+						function(callback) {
+							//set up a general callback for counting results to be used in both cases below
+							var theCallback = function(err, results) {
+								if(++count % 100 == 0) {
+									console.log('Imported ' + count + ' cards');
+								}
+								callback();
+							};
 
-			//add/update card to the raw card collection
-			upsertRawCard(rawCardsCollection, card);
-
-			//if we haven't seen this card before (same name is same card), upsert the base card in to the db
-			if(importedCards.indexOf(card.name) == -1) {
-				upsertCard(cardsCollection, card);
-				importedCards.push(card.name)
-			}
-			//if we've seen the card, add another printing to it
-			else {
-				addPrintingToCard(cardsCollection, card);
-			}
+							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
+							if(importedCards.indexOf(card.name) == -1) {
+								importedCards.push(card.name);
+								upsertCard(cardsCollection, card, theCallback);
+							}
+							//if we've seen the card, add another printing to it
+							else {
+								addPrintingToCard(cardsCollection, card, theCallback);
+							}
+						}
+					], callback);
+				});
+			})(aCard);
 		}
+		console.log('Finished staging card inserters, total cards found:', cardsToInsert.length);
+		async.parallelLimit(cardsToInsert, 100, function(err, results) {
+			if(err) {
+				console.error(err);
+			}
+			else {
+				console.log("Finished importing cards!");
+			}
+			process.exit();
+		})
 	});
 }
 exports.importCards = importCards;
 
-var upsertCard = function(dbCollection, card) {
+var upsertCard = function(dbCollection, card, callback) {
 	formatCard(card);
-	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
-		//console.log('format imported set ' + card.printings[0].card_set_id + ' card ' + card.name);
-	});
+	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, callback);
 }
 
-var upsertRawCard = function(dbCollection, card) {
-	dbCollection.update({ Id: card.Id }, { $set: card }, { upsert: true, safe: true }, function(err, docs) {
-		//console.log('raw imported set ' + card.card_set_id + ' card ' + card.name);
-	});
+var upsertRawCard = function(dbCollection, card, callback) {
+	dbCollection.update({ Id: card.Id }, { $set: card }, { upsert: true, safe: true }, callback)
 }
 
-var addPrintingToCard = function(dbCollection, card) {
+var addPrintingToCard = function(dbCollection, card, callback) {
 	var printing = getPrinting(card);
-	dbCollection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, function(err) {
-		if(err) {
-			console.log(err);
-		}
-		else {
-			//console.log('added set ' + printing.card_set_id + ' to card ' + card.name);
-		}
-	});
+	dbCollection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, callback);
 }
 
-var upsertSet = function(dbCollection, name, abbreviation) {
+var upsertSet = function(dbCollection, name, abbreviation, callback) {
 	var set = { name: name, abbreviation: abbreviation };
-	dbCollection.update({ name: name }, { $set : set }, { upsert: true, safe: true }, function(err, docs) {
-		//console.log('added set ' + name + ' to database');
-	});
+	dbCollection.update({ name: name }, { $set : set }, { upsert: true, safe: true }, callback);
 }
 
 var printingAttributes = [
 	'Id',
 	'artist',
-	'card_image',
-	'card_set_name',
-	'card_set_id',
+	'cardSetName',
+	'cardSetId',
 	'flavor',
 	'rarity',
-	'released_at',
-	'set_number'
+	'releasedAt',
+	'setNumber'
 ];
 
 var getPrinting = function(card) {
@@ -87,7 +109,7 @@ var getPrinting = function(card) {
 		printing[pAttribute] = card[pAttribute];
 	}
 
-	updateSetAbbreviation(printing);
+	printing = updateSetAbbreviation(printing);
 
 	return printing;
 }
@@ -109,6 +131,7 @@ var updateSetAbbreviation = function(printing) {
 	if(setReplacements.hasOwnProperty(printing.card_set_id)) {
 		printing.card_set_id = setReplacements.hasOwnProperty(printing.card_set_id);
 	}
+	return printing;
 }
 
 var formatCard = function(card) {
@@ -153,8 +176,6 @@ var formatCard = function(card) {
 		*/
 	}
 
-
-
 	//if the description contains an ability, push it in to the tags
 	var abilities = Keywords.getAbilities();
 	for(var aKey in abilities) {
@@ -165,7 +186,7 @@ var formatCard = function(card) {
 	}
 
 	//add the manacost to tags
-	card.tags.push(card.manacost.toLowerCase());
+	card.tags.push(card.manaCost.toLowerCase());
 
 	//add the colors of the card to tags
 	for(var cKey in card.colors) {
