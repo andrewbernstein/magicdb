@@ -15,7 +15,7 @@ npm-debug.log
 node_modules
 .idea
 config/runtime.json
-config/s3.json
+config/s3config.json
 cards.json
 cardimages/
 setImages/
