@@ -48,7 +48,7 @@ var scrapeCards = function() {
 	}
 	console.log('attempting to start scrapers');
 	console.log('total scrapers: ' + scrapers.length);
-	async.series(scrapers, function(err, results) {
+	async.parallelLimit(scrapers, 50, function(err, results) {
 		if(err) {
 			console.error(err);
 		}
