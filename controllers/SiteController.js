@@ -7,8 +7,12 @@ var indexGet = function(req, res) {
 	var pageData = {};
 	pageData.imageBaseUrl = config.images.baseUrl;
 
-	pageData.sets = KeywordsController.getPrintingSets();
-	res.render('index', pageData);
+	pageData.randomCard = CardController.getRandomCard(function(card) {
+		pageData.randomCard = card;
+
+		pageData.sets = KeywordsController.getPrintingSets();
+		res.render('index', pageData);
+	});
 };
 exports.indexGet = indexGet;
 
@@ -47,7 +51,7 @@ exports.cardGet = cardGet;
 var setGet = function(req, res) {
 	var pageData = {};
 	pageData.imageBaseUrl = config.images.baseUrl;
-	
+
 	var setName = decodeURIComponent(req.params.setName);
 	CardController.getSet(setName, function(results) {
 		pageData.results = results;

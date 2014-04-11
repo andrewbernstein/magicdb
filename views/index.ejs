@@ -3,12 +3,19 @@
 Index Page
 <br />
 
-<% for (var sKey in sets) { %>
-<div class="setname">
-	<a href = '/set/<%= sets[sKey] %>'>
-		<%= sets[sKey] %>
-	</a>
+<div class="sets">
+	<% for (var sKey in sets) { %>
+		<div class="setname">
+			<a href = '/set/<%= sets[sKey] %>'>
+				<%= sets[sKey] %>
+			</a>
+		</div>
+	<% } %>
 </div>
-<% } %>
+
+<div class="randomCard">
+	<% var card = randomCard %>
+	<% include card.ejs %>
+</div>
 
 <% include footer.ejs %>

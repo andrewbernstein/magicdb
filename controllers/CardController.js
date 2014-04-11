@@ -20,8 +20,8 @@ printingIncludes['printings'] = { $elemMatch: { cardSetId : '' }};
 var getCard = function(cardName, callback) {
 	MongoService.connect(function(db) {
 		var lcaseName = cardName.toLowerCase();
-		var rawCardsCollection = db.collection('cards');
-		rawCardsCollection.find({ lcaseName: lcaseName }, standardIncludes).toArray(function(err, results) {
+		var cardsCollection = db.collection('cards');
+		cardsCollection.find({ lcaseName: lcaseName }, standardIncludes).toArray(function(err, results) {
 			callback(results, callback);
 		})
 	});
@@ -32,9 +32,9 @@ exports.getCard = getCard;
 var getSet = function(setName, callback) {
 	MongoService.connect(function(db) {
 		var ucaseName = setName.toUpperCase();
-		var rawCardsCollection = db.collection('cards');
+		var cardsCollection = db.collection('cards');
 		printingIncludes.printings = { $elemMatch: { cardSetId : ucaseName } };
-		rawCardsCollection.find({ "printings.cardSetId" : ucaseName }, printingIncludes).toArray(function(err, results) {
+		cardsCollection.find({ "printings.cardSetId" : ucaseName }, printingIncludes).toArray(function(err, results) {
 			results.sort(function(a, b) {
 				if(a.printings[0].setNumber < b.printings[0].setNumber) {
 					return -1;
@@ -46,3 +46,25 @@ var getSet = function(setName, callback) {
 	});
 };
 exports.getSet = getSet;
+
+//get a random card from the database
+//results are strangely consistent if you don't have an index on random
+var getRandomCard = function(callback) {
+	MongoService.connect(function(db) {
+		var cardsCollection = db.collection('cards');
+		var random = Math.random();
+		console.log(random);
+
+		result = cardsCollection.findOne({ random : { $gte : random } }, standardIncludes, function(err, results) {
+			if(!results) {
+				cardsCollection.findOne({ random: { $lte: random }}, standardIncludes, function(err, results) {
+					callback(results);
+				});
+			}
+			else {
+				callback(results);
+			}
+		});
+	});
+};
+exports.getRandomCard = getRandomCard;
