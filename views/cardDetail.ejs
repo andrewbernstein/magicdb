@@ -4,13 +4,13 @@
 			<div class="cardimages">
 				<% for(var pKey in card.printings) {%>
 					<% var printing = card.printings[pKey] %>
-					<div class="cardimage" data-set="<%= printing.card_set_name %>" >
+					<div class="cardimage" data-set="<%= printing.cardSetName %>" >
 						<a href="/card/<%= card.name %>">
-							<img src="<%= imageBaseUrl + printing.id + '.jpeg' %>" />
+							<img src="<%= imageBaseUrl + printing.id + '.jpg' %>" />
 						</a>
 						<div class="cardprintingattribute">
 							<div class="cardprintingtitle">Expansion:</div>
-							<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
+							<div class="cardprintingvalue"><%= printing.cardSetName %> (<%= printing.cardSetId %>)</div>
 						</div>
 						<div class="cardprintingattribute">
 							<div class="cardprintingtitle">Rarity:</div>
@@ -18,7 +18,7 @@
 						</div>
 						<div class="cardprintingattribute">
 							<div class="cardprintingtitle">Card Number:</div>
-							<div class="cardprintingvalue"><%= printing.set_number %></div>
+							<div class="cardprintingvalue"><%= printing.setNumber %></div>
 						</div>
 					</div>
 				<% } %>
@@ -64,9 +64,9 @@
 			<% var printing = card.printings[pKey] %>
 			<div class="cardprinting">
 
-				<div class="cardprintingattribute cardprintingset" data-set="<%= printing.card_set_name %>">
+				<div class="cardprintingattribute cardprintingset" data-set="<%= printing.cardSetName %>">
 					<div class="cardprintingtitle">Expansion:</div>
-					<div class="cardprintingvalue"><%= printing.card_set_name %> (<%= printing.card_set_id %>)</div>
+					<div class="cardprintingvalue"><%= printing.cardSetName %> (<%= printing.cardSetId %>)</div>
 				</div>
 			</div>
 		<% } %>
