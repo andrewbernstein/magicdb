@@ -12,6 +12,20 @@ var importCards = function() {
 		var setsCollection = db.collection('sets');
 		var cards = require('../' + config.functions.cardFile);
 		console.log('finished reading card json');
+
+		//blow away all existing cards and sets to start to prevent potential data corruption issues
+		async.parallel([
+			function(callback) {
+				cardsCollection.remove(callback);
+			},
+			function(callback) {
+				setsCollection.remove(callback);
+			},
+			function(callback) {
+				rawCardsCollection.remove(callback);
+			}
+		]);
+
 		var count = 0;
 		var cardsToInsert = [];
 		for(var i in cards) {
@@ -19,12 +33,13 @@ var importCards = function() {
 			//creating a closure here to avoid any conflicts with the card variable
 			(function(card) {
 				cardsToInsert.push(function(callback) {
-					async.series([
+					//as it turns out, the steps below are independent of each other, so we can do them in parallel!
+					async.parallel([
 						function(callback) {
 							//if we haven't seen this set before, insert it in to the database
-							if(importedSets.indexOf(card.card_set_id) == -1) {
-								importedSets.push(card.card_set_id);
-								upsertSet(setsCollection, card.card_set_name, card.card_set_id, callback);
+							if(importedSets.indexOf(card.cardSetId) == -1) {
+								importedSets.push(card.cardSetId);
+								upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
 							}
 							else {
 								callback();
@@ -77,7 +92,7 @@ var upsertCard = function(dbCollection, card, callback) {
 }
 
 var upsertRawCard = function(dbCollection, card, callback) {
-	dbCollection.update({ Id: card.Id }, { $set: card }, { upsert: true, safe: true }, callback)
+	dbCollection.update({ id: card.id }, { $set: card }, { safe: true }, callback)
 }
 
 var addPrintingToCard = function(dbCollection, card, callback) {
@@ -139,6 +154,10 @@ var formatCard = function(card) {
 	card.lcaseName = card.name.toLowerCase();
 	card.lcaseType = card.type.toLowerCase();
 	card.lcaseDescription = card.description.toLowerCase();
+
+	//add a random field for getting a random card from the database
+	//idea is from http://stackoverflow.com/questions/2824157/random-record-from-mongodb (second solution)
+	card.random = Math.random();
 
 	//pull out values that are not unique to this printing of the card and put them in arrays
 	card.printings = [];
