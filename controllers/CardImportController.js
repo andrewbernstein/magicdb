@@ -27,7 +27,7 @@ var importCards = function() {
 				cardsCollection.ensureIndex('name', callback);
 			},
 			function(callback) {
-				cardsCollection.ensureIndex('name', callback);
+				sets.ensureIndex('name', callback);
 			}
 		]);
 
