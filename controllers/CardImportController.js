@@ -27,7 +27,7 @@ var importCards = function() {
 				cardsCollection.ensureIndex('name', callback);
 			},
 			function(callback) {
-				sets.ensureIndex('name', callback);
+				setsCollection.ensureIndex('name', callback);
 			}
 		]);
 
@@ -41,10 +41,15 @@ var importCards = function() {
 			(function(card) {
 				cardsToInsert.push(function(callback) {
 					//as it turns out, the steps below are independent of each other, so we can do them in parallel!
-					async.parallel([
+					async.series([
 						function(callback) {
 							//if we haven't seen this set before, insert it in to the database
 							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
+								if(err) {
+									console.error(err);
+									return callback(err);
+								}
+
 								if(!results) {
 									upsertSet(setsCollection, card.cardSetName, card.cardSetId, card.releasedAt, callback);
 								}
@@ -60,6 +65,10 @@ var importCards = function() {
 						function(callback) {
 							//set up a general callback for counting results to be used in both cases below
 							var theCallback = function(err, results) {
+								if(err) {
+									console.error(err);
+									return callback(err);
+								}
 								if(++count % 100 == 0) {
 									console.log('Imported ' + count + ' cards');
 								}
@@ -68,6 +77,10 @@ var importCards = function() {
 
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
 							cardsCollection.findOne({ name: card.name }, function(err, results) {
+								if(err) {
+									console.error(err);
+									return callback(err);
+								}
 								if(!results) {
 									upsertCard(cardsCollection, card, theCallback);
 								}
