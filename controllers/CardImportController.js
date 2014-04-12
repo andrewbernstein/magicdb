@@ -4,7 +4,6 @@ var Keywords = require('./KeywordsController');
 var async = require('async');
 
 var importCards = function() {
-	var importedCards = [];
 	var importedSets = [];
 	MongoService.connect(function(db) {
 		var rawCardsCollection = db.collection('rawCards');
@@ -14,6 +13,7 @@ var importCards = function() {
 		console.log('finished reading card json');
 
 		//blow away all existing cards and sets to start to prevent potential data corruption issues
+		//and set up some indexes (ensuring that they're there)
 		async.parallel([
 			function(callback) {
 				cardsCollection.remove(callback);
@@ -23,8 +23,16 @@ var importCards = function() {
 			},
 			function(callback) {
 				rawCardsCollection.remove(callback);
+			},
+			function(callback) {
+				cardsCollection.ensureIndex('name', callback);
+			},
+			function(callback) {
+				cardsCollection.ensureIndex('name', callback);
 			}
 		]);
+		console.log('Finished clearing out collections and ensuring indexes');
+
 
 		var count = 0;
 		var cardsToInsert = [];
@@ -37,13 +45,14 @@ var importCards = function() {
 					async.parallel([
 						function(callback) {
 							//if we haven't seen this set before, insert it in to the database
-							if(importedSets.indexOf(card.cardSetId) == -1) {
-								importedSets.push(card.cardSetId);
-								upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
-							}
-							else {
-								callback();
-							}
+							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
+								if(!results) {
+									upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
+								}
+								else {
+									callback();
+								}
+							})
 						},
 						function(callback) {
 							//add/update card to the raw card collection
@@ -59,14 +68,14 @@ var importCards = function() {
 							};
 
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
-							if(importedCards.indexOf(card.name) == -1) {
-								importedCards.push(card.name);
-								upsertCard(cardsCollection, card, theCallback);
-							}
-							//if we've seen the card, add another printing to it
-							else {
-								addPrintingToCard(cardsCollection, card, theCallback);
-							}
+							cardsCollection.findOne({ name: card.name}, function(err, results) {
+								if(results) {
+									upsertCard(cardsCollection, card, theCallback);
+								}
+								else {
+									addPrintingToCard(cardsCollection, card, theCallback);
+								}
+							})
 						}
 					], callback);
 				});
