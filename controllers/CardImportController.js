@@ -178,11 +178,17 @@ var formatCard = function(card) {
 		card.tags.push(namePart);
 
 		//strip out commas so "Elspeth" ends up in the tags for "Elspeth, Sun's Champion"
-		namePart = namePartnamePart = namePart.replace(/,/g, '');
-		card.tags.push(namePart);
+		if(namePart != namePart.replace(/,/g, '')) {
+			card.tags.push(namePart.replace(/,/g, ''));
+		}
+
+		//strip out "'s" out of card names so "serra" will find "Serra's Sanctum"
+		if(namePart != namePart.replace(/'s/g, '')) {
+			card.tags.push(namePart.replace(/'s/g, ''));
+		}
 
 		/*
-		//attempt to deal with plurals
+		//attempt to deal with special plurals
 		if(namePart[namePart.length - 1] == 's') {
 			//there are a lot of elves, let's make it easier to search for them
 			if(namePart == 'elves') {
