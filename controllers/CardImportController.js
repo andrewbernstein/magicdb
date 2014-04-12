@@ -29,67 +29,67 @@ var importCards = function() {
 			function(callback) {
 				cardsCollection.ensureIndex('name', callback);
 			}
-		], function() {
-			console.log('Finished clearing out collections and ensuring indexes');
+		]);
 
-			var count = 0;
-			var cardsToInsert = [];
-			for(var i in cards) {
-				var aCard = cards[i];
-				//creating a closure here to avoid any conflicts with the card variable
-				(function(card) {
-					cardsToInsert.push(function(callback) {
-						//as it turns out, the steps below are independent of each other, so we can do them in parallel!
-						async.parallel([
-							function(callback) {
-								//if we haven't seen this set before, insert it in to the database
-								setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
-									if(!results) {
-										upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
-									}
-									else {
-										callback();
-									}
-								})
-							},
-							function(callback) {
-								//add/update card to the raw card collection
-								upsertRawCard(rawCardsCollection, card, callback);
-							},
-							function(callback) {
-								//set up a general callback for counting results to be used in both cases below
-								var theCallback = function(err, results) {
-									if(++count % 100 == 0) {
-										console.log('Imported ' + count + ' cards');
-									}
+		console.log('Finished clearing out collections and ensuring indexes');
+
+		var count = 0;
+		var cardsToInsert = [];
+		for(var i in cards) {
+			var aCard = cards[i];
+			//creating a closure here to avoid any conflicts with the card variable
+			(function(card) {
+				cardsToInsert.push(function(callback) {
+					//as it turns out, the steps below are independent of each other, so we can do them in parallel!
+					async.parallel([
+						function(callback) {
+							//if we haven't seen this set before, insert it in to the database
+							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
+								if(!results) {
+									upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
+								}
+								else {
 									callback();
-								};
+								}
+							})
+						},
+						function(callback) {
+							//add/update card to the raw card collection
+							insertRawCard(rawCardsCollection, card, callback);
+						},
+						function(callback) {
+							//set up a general callback for counting results to be used in both cases below
+							var theCallback = function(err, results) {
+								if(++count % 100 == 0) {
+									console.log('Imported ' + count + ' cards');
+								}
+								callback();
+							};
 
-								//if we haven't seen this card before (same name is same card), upsert the base card in to the db
-								cardsCollection.findOne({ name: card.name }, function(err, results) {
-									if(!results) {
-										upsertCard(cardsCollection, card, theCallback);
-									}
-									else {
-										addPrintingToCard(cardsCollection, card, theCallback);
-									}
-								})
-							}
-						], callback);
-					});
-				})(aCard);
+							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
+							cardsCollection.findOne({ name: card.name }, function(err, results) {
+								if(!results) {
+									upsertCard(cardsCollection, card, theCallback);
+								}
+								else {
+									addPrintingToCard(cardsCollection, card, theCallback);
+								}
+							})
+						}
+					], callback);
+				});
+			})(aCard);
+		}
+		console.log('Finished staging card inserters, total cards found:', cardsToInsert.length);
+		async.parallelLimit(cardsToInsert, 100, function(err, results) {
+			if(err) {
+				console.error(err);
 			}
-			console.log('Finished staging card inserters, total cards found:', cardsToInsert.length);
-			async.parallelLimit(cardsToInsert, 100, function(err, results) {
-				if(err) {
-					console.error(err);
-				}
-				else {
-					console.log("Finished importing cards!");
-				}
-				process.exit();
-			})
-		});
+			else {
+				console.log("Finished importing cards!");
+			}
+			process.exit();
+		})
 	});
 }
 exports.importCards = importCards;
@@ -99,8 +99,8 @@ var upsertCard = function(dbCollection, card, callback) {
 	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, callback);
 }
 
-var upsertRawCard = function(dbCollection, card, callback) {
-	dbCollection.update({ id: card.id }, { $set: card }, { upsert: true, safe: true }, callback)
+var insertRawCard = function(dbCollection, card, callback) {
+	dbCollection.insert(card, callback)
 }
 
 var addPrintingToCard = function(dbCollection, card, callback) {
