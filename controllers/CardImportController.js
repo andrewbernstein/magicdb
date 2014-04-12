@@ -46,7 +46,7 @@ var importCards = function() {
 							//if we haven't seen this set before, insert it in to the database
 							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
 								if(!results) {
-									upsertSet(setsCollection, card.cardSetName, card.cardSetId, callback);
+									upsertSet(setsCollection, card.cardSetName, card.cardSetId, card.releasedAt, callback);
 								}
 								else {
 									callback();
@@ -108,8 +108,8 @@ var addPrintingToCard = function(dbCollection, card, callback) {
 	dbCollection.update({ name: card.name }, { $push: { printings: printing }}, { safe: true }, callback);
 }
 
-var upsertSet = function(dbCollection, name, abbreviation, callback) {
-	var set = { name: name, abbreviation: abbreviation };
+var upsertSet = function(dbCollection, name, abbreviation, releasedAt, callback) {
+	var set = { name: name, abbreviation: abbreviation, releasedAt: Date.parse(releasedAt) };
 	dbCollection.update({ name: name }, { $set : set }, { upsert: true, safe: true }, callback);
 }
 
