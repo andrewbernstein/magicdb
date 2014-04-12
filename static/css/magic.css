@@ -1,7 +1,20 @@
+body {
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.content {
+	display: inline-block;
+}
+
+.title {
+	display: block;
+}
+
 .card {
 	width: 300px;
 	display: inline-block;
-	vertical-align: top;
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
@@ -84,4 +97,9 @@
 	height: 300px;
 	width: 400px;
 	overflow-y: scroll;
+	display: inline-block;
+}
+
+.randomCard {
+	display:inline-block;
 }

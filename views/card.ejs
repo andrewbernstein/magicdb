@@ -3,8 +3,8 @@
 			<% var printing = card.printings[0] %>
 			<div class="cardprinting">
 				<div class="cardimage">
-					<a href="/card/<%= card.name %>" >
-						<img src="<%= imageBaseUrl + printing.id + '.jpg' %>" />
+					<a href="/card/<%= card.name %>">
+						<img src="<%= imageBaseUrl + printing.id + '.jpg' %>" alt="<%= card.name + " - " + printing.cardSetName %>" title="<%= card.name + " - " + printing.cardSetName %>"/>
 					</a>
 				</div>
 			</div>

@@ -1,7 +1,14 @@
 <% include header.ejs %>
 
-Index Page
-<br />
+<div class="title">
+	Index Page
+	<br />
+</div>
+
+<div class="randomCard">
+	<% var card = randomCard %>
+	<% include card.ejs %>
+</div>
 
 <div class="sets">
 	<% for (var sKey in sets) { %>
@@ -13,9 +20,6 @@ Index Page
 	<% } %>
 </div>
 
-<div class="randomCard">
-	<% var card = randomCard %>
-	<% include card.ejs %>
-</div>
+
 
 <% include footer.ejs %>
