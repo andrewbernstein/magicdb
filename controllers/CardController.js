@@ -22,7 +22,7 @@ var getCard = function(cardName, callback) {
 		var lcaseName = cardName.toLowerCase();
 		var cardsCollection = db.collection('cards');
 		cardsCollection.find({ lcaseName: lcaseName }, standardIncludes).toArray(function(err, results) {
-			callback(results, callback);
+			callback(results);
 		})
 	});
 };
@@ -41,7 +41,7 @@ var getSet = function(setName, callback) {
 				}
 				return 1;
 			});
-			callback(results, callback);
+			callback(results);
 		})
 	});
 };
