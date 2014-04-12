@@ -1,6 +1,7 @@
 var SearchController = require('./../controllers/CardSearchController');
 var CardController = require('./../controllers/CardController');
 var KeywordsController = require('./../controllers/KeywordsController');
+var SetController = require('./../controllers/SetController');
 var config = require('config');
 
 var indexGet = function(req, res) {
@@ -10,8 +11,11 @@ var indexGet = function(req, res) {
 	pageData.randomCard = CardController.getRandomCard(function(card) {
 		pageData.randomCard = card;
 
-		pageData.sets = KeywordsController.getPrintingSets();
-		res.render('index', pageData);
+		SetController.getAllSetsByReleaseDate(function(sets) {
+			pageData.sets = sets;
+
+			res.render('index', pageData);
+		});
 	});
 };
 exports.indexGet = indexGet;
