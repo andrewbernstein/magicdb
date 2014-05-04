@@ -15,7 +15,9 @@ var app = express();
 app.engine('.ejs', ejs.__express);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use("/static", express.static(__dirname + '/static'))
+app.use("/static", express.static(__dirname + '/static'));
+app.use(express.json());
+app.use(express.urlencoded());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);

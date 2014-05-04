@@ -8,10 +8,10 @@ var indexGet = function(req, res) {
 	var pageData = {};
 	pageData.imageBaseUrl = config.images.baseUrl;
 
-	pageData.randomCard = CardController.getRandomCard(function(card) {
+	pageData.randomCard = CardController.getRandomCard(function(err, card) {
 		pageData.randomCard = card;
 
-		SetController.getAllSetsByReleaseDate(function(sets) {
+		SetController.getAllSetsByReleaseDate(function(err, sets) {
 			pageData.sets = sets;
 
 			res.render('index', pageData);
@@ -33,7 +33,12 @@ var searchPost = function(req, res) {
 	pageData.imageBaseUrl = config.images.baseUrl;
 
 	var searchQuery = req.body.query;
-	SearchController.cardSearch(searchQuery, function(results) {
+	SearchController.cardSearch(searchQuery, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
 		pageData.results = results;
 		res.render('search', pageData);
 	});
@@ -45,7 +50,12 @@ var cardGet = function(req, res) {
 	pageData.imageBaseUrl = config.images.baseUrl;
 
 	var cardName = decodeURIComponent(req.params.cardName);
-	CardController.getCard(cardName, function(results) {
+	CardController.getCard(cardName, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
 		pageData.results = results;
 		res.render('singleCard', pageData);
 	});
@@ -57,9 +67,53 @@ var setGet = function(req, res) {
 	pageData.imageBaseUrl = config.images.baseUrl;
 
 	var setName = decodeURIComponent(req.params.setName);
-	CardController.getSet(setName, function(results) {
+	CardController.getSet(setName, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
 		pageData.results = results;
 		res.render('search', pageData);
 	});
 }
 exports.setGet = setGet;
+
+var cardJson = function(req, res) {
+	var cardName = req.body.name;
+	CardController.getCard(cardName, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
+		res.json(results);
+	});
+}
+exports.cardJson = cardJson;
+
+var setJson = function(req, res) {
+	var setName = req.body.site;
+	CardController.getSet(setName, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
+		res.json(results);
+	})
+}
+exports.setJson = setJson;
+
+var searchJson = function(req, res) {
+	var searchQuery = req.body.query;
+	SearchController.cardSearch(searchQuery, function(err, results) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
+		res.json(results);
+	});
+}
+exports.searchJson = searchJson;

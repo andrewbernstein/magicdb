@@ -21,9 +21,7 @@ var getCard = function(cardName, callback) {
 	MongoService.connect(function(db) {
 		var lcaseName = cardName.toLowerCase();
 		var cardsCollection = db.collection('cards');
-		cardsCollection.find({ lcaseName: lcaseName }, standardIncludes).toArray(function(err, results) {
-			callback(results);
-		})
+		cardsCollection.find({ lcaseName: lcaseName }, standardIncludes).toArray(callback);
 	});
 };
 exports.getCard = getCard;
@@ -41,7 +39,7 @@ var getSet = function(setName, callback) {
 				}
 				return 1;
 			});
-			callback(results);
+			callback(err, results);
 		})
 	});
 };
@@ -58,11 +56,11 @@ var getRandomCard = function(callback) {
 		result = cardsCollection.findOne({ random : { $gte : random } }, standardIncludes, function(err, results) {
 			if(!results) {
 				cardsCollection.findOne({ random: { $lte: random }}, standardIncludes, function(err, results) {
-					callback(results);
+					callback(err, results);
 				});
 			}
 			else {
-				callback(results);
+				callback(err, results);
 			}
 		});
 	});
