@@ -6,17 +6,7 @@ var config = require('config');
 
 var indexGet = function(req, res) {
 	var pageData = {};
-	pageData.imageBaseUrl = config.images.baseUrl;
-
-	pageData.randomCard = CardController.getRandomCard(function(err, card) {
-		pageData.randomCard = card;
-
-		SetController.getAllSetsByReleaseDate(function(err, sets) {
-			pageData.sets = sets;
-
-			res.render('index', pageData);
-		});
-	});
+	res.render('index', pageData);
 };
 exports.indexGet = indexGet;
 
