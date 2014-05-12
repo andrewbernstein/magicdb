@@ -1,8 +1,4 @@
 angular.module('project', [ 'ngRoute' ])
-	//.value('fbURL', 'https://angularjs-projects.firebaseio.com/')
-	//.factory('Projects', function($firebase, fbURL) {
-	//	return $firebase(new Firebase(fbURL));
-	//})
 
 	.config(function($routeProvider) {
 		$routeProvider
@@ -10,13 +6,17 @@ angular.module('project', [ 'ngRoute' ])
 				controller: 'MainController',
 				templateUrl :'/static/templates/main.html'
 			})
-			.when('/search/:searchTerms', {
+			.when('/search', {
 				controller: 'SearchController',
 				templateUrl: '/static/templates/cards.html'
 			})
-			.when('/card/:cardName', {
-				controller: 'CardController',
+			.when('/search/:search', {
+				controller: 'SearchController',
 				templateUrl: '/static/templates/cards.html'
+			})
+			.when('/card/:card', {
+				controller: 'CardController',
+				templateUrl: '/static/templates/card.html'
 			})
 			.when('/set/:setName', {
 				controller: 'SetController',
@@ -37,11 +37,23 @@ angular.module('project', [ 'ngRoute' ])
 			});
 		});
 	})
-	.controller('SearchController', function($scope) {
-
+	.controller('SearchController', function($scope, $location, $routeParams, $timeout) {
+		if($routeParams.search) {
+			$.get('/json/search/' + $routeParams.searchTerms, function(results) {
+				$scope.results = results;
+				$timeout(function() { $location.path('/search/' + $routeParams.searchTerms )});
+			});
+		}
 	})
-	.controller('CardController', function($scope) {
-
+	.controller('CardController', function($scope, $location, $routeParams, $timeout) {
+		$.get('/json/card/' + $routeParams.card, function(card) {
+			$scope.card = card;
+			$timeout(function() {
+				$scope.cardSet = {};
+				$scope.cardSet.cardSetName = card.printings[0].cardSetName;
+				$location.path('/card/' + $routeParams.card);
+			});
+		})
 	})
 	.controller('SetController', function($scope) {
 

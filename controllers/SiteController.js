@@ -80,14 +80,18 @@ var setGet = function(req, res) {
 exports.setGet = setGet;
 
 var cardJson = function(req, res) {
-	var cardName = req.body.name;
+	var cardName = req.params.cardName;
 	CardController.getCard(cardName, function(err, results) {
 		if(err) {
 			console.error(err);
 			return res.json({ error: true });
 		}
-
-		res.json(results);
+		if(results && results.length == 1) {
+			res.json(results[0]);
+		}
+		else {
+			res.json({});
+		}
 	});
 };
 exports.cardJson = cardJson;
@@ -106,7 +110,7 @@ var setJson = function(req, res) {
 exports.setJson = setJson;
 
 var searchJson = function(req, res) {
-	var searchQuery = req.body.query;
+	var searchQuery = req.params.search;
 	SearchController.cardSearch(searchQuery, function(err, results) {
 		if(err) {
 			console.error(err);
