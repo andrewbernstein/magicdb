@@ -76,7 +76,7 @@ var setGet = function(req, res) {
 		pageData.results = results;
 		res.render('search', pageData);
 	});
-}
+};
 exports.setGet = setGet;
 
 var cardJson = function(req, res) {
@@ -89,7 +89,7 @@ var cardJson = function(req, res) {
 
 		res.json(results);
 	});
-}
+};
 exports.cardJson = cardJson;
 
 var setJson = function(req, res) {
@@ -102,7 +102,7 @@ var setJson = function(req, res) {
 
 		res.json(results);
 	})
-}
+};
 exports.setJson = setJson;
 
 var searchJson = function(req, res) {
@@ -115,5 +115,29 @@ var searchJson = function(req, res) {
 
 		res.json(results);
 	});
-}
+};
 exports.searchJson = searchJson;
+
+var randomCardJson = function(req, res) {
+	CardController.getRandomCard(function(err, card) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
+		res.json(card);
+	});
+};
+exports.randomCardJson = randomCardJson;
+
+var getAllSetsByReleaseDateJson = function(req, res) {
+	SetController.getAllSetsByReleaseDate(function(err, sets) {
+		if(err) {
+			console.error(err);
+			return res.json({ error: true });
+		}
+
+		res.json(sets);
+	});
+};
+exports.getAllSetsByReleaseDateJson = getAllSetsByReleaseDateJson;

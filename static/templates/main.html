@@ -1,0 +1,47 @@
+<div class="randomCard">
+	<div class="card">
+		<div class="cardprintings">
+			<div class="cardprinting">
+				<div class="cardimage">
+					<a href="/card/{{card.name}}">
+						<img src="{{ 'https://s3-us-west-2.amazonaws.com/magicdb-cards/' + card.printings[0].id + '.jpg' }}" alt="{{card.name + ' - ' + card.printings[0].cardSetName}} " title="{{ card.name + ' - ' + card.printings[0].cardSetName }}"/>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardinfo">
+			<div class="cardattribute">
+				<div class="cardtitle">Name:</div>
+				<div class="cardvalue">{{ card.name }}</div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Cost:</div>
+				<div class="cardvalue">{{ card.manaCost }}</div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">CMC:</div>
+				<div class="cardvalue">{{ card.convertedManaCost }}</div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Type:</div>
+				<div class="cardvalue">{{ card.type? card.type: card.types }}</div>
+			</div>
+			<div class="cardattribute">
+				<div class="cardtitle">Text:</div>
+				<div class="cardvalue">{{ card.description }}</div>
+			</div>
+			<div ng-if="card.type.indexOf('Creature') !== -1" class="cardattribute">
+				<div class="cardtitle">P/T:</div>
+				<div class="cardvalue">{{ card.power }} / {{ card.toughness }}</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="sets">
+	<div ng-repeat="set in sets" class="setname">
+		<a href = '/set/{{ set["abbreviation"] }}'>
+		{{ set['abbreviation'] + ' - ' + set['name'] }}
+		</a>
+	</div>
+</div>
