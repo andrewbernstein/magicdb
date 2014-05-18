@@ -46,7 +46,7 @@ var importCards = function() {
 							//if we haven't seen this set before, insert it in to the database
 							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
 								if(err) {
-									console.error(err);
+									console.error('upsert set error', err);
 									return callback(err);
 								}
 
@@ -66,7 +66,8 @@ var importCards = function() {
 							//set up a general callback for counting results to be used in both cases below
 							var theCallback = function(err, results) {
 								if(err) {
-									console.error(err);
+									console.log(card);
+									console.error('upsert card callback error', err);
 									return callback(err);
 								}
 								if(++count % 100 == 0) {
@@ -78,7 +79,7 @@ var importCards = function() {
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
 							cardsCollection.findOne({ name: card.name }, function(err, results) {
 								if(err) {
-									console.error(err);
+									console.error('upsert card error', err);
 									return callback(err);
 								}
 								if(!results) {
@@ -109,6 +110,9 @@ exports.importCards = importCards;
 
 var upsertCard = function(dbCollection, card, callback) {
 	formatCard(card);
+	if(card._id) {
+		delete card._id;
+	}
 	dbCollection.update({ name: card.name }, { $set: card }, { upsert: true, safe: true }, callback);
 }
 
