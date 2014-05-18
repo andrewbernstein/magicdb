@@ -87,7 +87,7 @@ var cardJson = function(req, res) {
 exports.cardJson = cardJson;
 
 var setJson = function(req, res) {
-	var setName = req.body.site;
+	var setName = req.params.setName;
 	CardController.getSet(setName, function(err, results) {
 		if(err) {
 			console.error(err);

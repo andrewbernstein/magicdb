@@ -9,6 +9,11 @@
 <body>
 <div class="header">
 	<a href="/">Index</a>
-	<a href="/search">Search</a>
 </div>
 <div class="content">
+	<form ng-submit="performSearch()" ng-controller="SearchController">
+		Search:
+		<input type="text" name="query" id="searchquery" ng-model="searchquery" />
+		<input type="submit" name="Search" />
+	</form>
+	<div ng-view></div>

@@ -26,60 +26,72 @@ angular.module('project', [ 'ngRoute' ])
 				redirectTo:'/'
 			});
 	})
+	.factory('Search', [
+		'$location',
+		function($location) {
+			return function() {
+				var searchTerm = $('#searchquery').val();
+				if (searchTerm) {
+					$location.path('/search/' + searchTerm);
+				}
+			}
+		}]
+	)
+	.controller('MainController', [
+		'$scope', '$location', '$timeout', 'Search',
+		function($scope, $location, $timeout, Search) {
+			$scope.performSearch = Search;
+			//TODO: should really async.parallel these two ajax calls
+			$.get('/json/randomCard', function(card) {
+				$scope.card = card;
 
-	.controller('MainController', function($scope, $location, $timeout) {
-		//TODO: should really async.parallel these two ajax calls
-		$.get('/json/randomCard', function(card) {
-			$scope.card = card;
-			$.get('/json/getAllSetsByReleaseDate', function(sets) {
-				$scope.sets = sets;
-				$timeout(function() { $location.path('/')});
-			});
-		});
-	})
-	.controller('SearchController', function($scope, $location, $routeParams, $timeout) {
-		if($routeParams.search) {
-			$.get('/json/search/' + $routeParams.searchTerms, function(results) {
-				$scope.results = results;
-				$timeout(function() { $location.path('/search/' + $routeParams.searchTerms )});
+				$.get('/json/getAllSetsByReleaseDate', function(sets) {
+					$scope.sets = sets;
+					$timeout(function() {
+						$location.path('/');
+					});
+				});
 			});
 		}
-	})
-	.controller('CardController', function($scope, $location, $routeParams, $timeout) {
-		$.get('/json/card/' + $routeParams.card, function(card) {
-			$scope.card = card;
-			$timeout(function() {
-				$scope.cardSet = {};
-				$scope.cardSet.cardSetName = card.printings[0].cardSetName;
-				$location.path('/card/' + $routeParams.card);
+	])
+	.controller('SearchController', [
+		'$scope', '$location', '$routeParams', '$timeout', 'Search',
+		function($scope, $location, $routeParams, $timeout, Search) {
+			$scope.performSearch = Search;
+			$scope.searchparam = $routeParams.search;
+			if($routeParams.search) {
+				$.get('/json/search/' + $routeParams.search, function(results) {
+					$scope.cards = results;
+					$timeout(function() {
+						$location.path('/search/' + $routeParams.search);
+					});
+				});
+			}
+		}
+	])
+	.controller('CardController', [
+		'$scope', '$location', '$routeParams', '$timeout', 'Search',
+		function($scope, $location, $routeParams, $timeout, Search) {
+			$scope.performSearch = Search;
+			$.get('/json/card/' + $routeParams.card, function(card) {
+				$scope.card = card;
+				$timeout(function() {
+					$scope.cardSet = {};
+					$scope.cardSet.cardSetName = card.printings[0].cardSetName;
+					$location.path('/card/' + $routeParams.card);
+				});
 			});
-		})
-	})
-	.controller('SetController', function($scope) {
-
-	});
-/*
-	.controller('CreateCtrl', function($scope, $location, $timeout) {
-		$scope.save = function() {
-			Projects.$add($scope.project, function() {
-				$timeout(function() { $location.path('/'); });
+		}
+	])
+	.controller('SetController', [
+		'$scope', '$location', '$routeParams', '$timeout', 'Search',
+		function($scope, $location, $routeParams, $timeout, Search) {
+			$scope.performSearch = Search;
+			$.get('/json/set/' + $routeParams.setName, function(results) {
+				$scope.cards = results;
+				$timeout(function() {
+					$location.path('/set/' + $routeParams.setName);
+				});
 			});
-		};
-	})
-
-	.controller('EditCtrl',
-	function($scope, $location, $routeParams, $firebase, fbURL) {
-		var projectUrl = fbURL + $routeParams.projectId;
-		$scope.project = $firebase(new Firebase(projectUrl));
-
-		$scope.destroy = function() {
-			$scope.project.$remove();
-			$location.path('/');
-		};
-
-		$scope.save = function() {
-			$scope.project.$save();
-			$location.path('/');
-		};
-	});
-	*/
+		}
+	]);
