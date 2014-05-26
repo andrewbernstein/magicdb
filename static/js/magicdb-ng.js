@@ -38,56 +38,46 @@ angular.module('project', [ 'ngRoute' ])
 		}]
 	)
 	.controller('MainController', [
-		'$scope', '$location', '$timeout', 'Search',
-		function($scope, $location, $timeout, Search) {
+		'$scope', '$location', '$timeout', '$http', 'Search',
+		function($scope, $location, $timeout, $http, Search) {
+			$scope.card = null;
 			$scope.performSearch = Search;
-			//TODO: should really async.parallel these two ajax calls
-			$.get('/json/randomCard', function(card) {
-				$scope.card = card;
-
-				$.get('/json/getAllSetsByReleaseDate', function(sets) {
+			$http.get('/json/randomCard').success(function(card) {
+				$http.get('/json/getAllSetsByReleaseDate').success(function(sets) {
+					$scope.card = card;
 					$scope.sets = sets;
-					$timeout(function() {
-						$location.path('/');
-					});
 				});
 			});
 		}
 	])
 	.controller('SearchController', [
-		'$scope', '$location', '$routeParams', '$timeout', 'Search',
-		function($scope, $location, $routeParams, $timeout, Search) {
+		'$scope', '$location', '$routeParams', '$timeout', '$http', 'Search',
+		function($scope, $location, $routeParams, $timeout, $http, Search) {
 			$scope.performSearch = Search;
 			$scope.searchparam = $routeParams.search;
 			if($routeParams.search) {
-				$.get('/json/search/' + $routeParams.search, function(results) {
+				$http.get('/json/search/' + $routeParams.search).success(function(results) {
 					$scope.cards = results;
-					$timeout(function() {
-						$location.path('/search/' + $routeParams.search);
-					});
 				});
 			}
 		}
 	])
 	.controller('CardController', [
-		'$scope', '$location', '$routeParams', '$timeout', 'Search',
-		function($scope, $location, $routeParams, $timeout, Search) {
+		'$scope', '$location', '$routeParams', '$timeout', '$http', 'Search',
+		function($scope, $location, $routeParams, $timeout, $http, Search) {
 			$scope.performSearch = Search;
-			$.get('/json/card/' + $routeParams.card, function(card) {
+			$http.get('/json/card/' + $routeParams.card).success(function(card) {
 				$scope.card = card;
-				$timeout(function() {
-					$scope.cardSet = {};
-					$scope.cardSet.cardSetName = card.printings[0].cardSetName;
-					$location.path('/card/' + $routeParams.card);
-				});
+				$scope.cardSet = {};
+				$scope.cardSet.cardSetName = card.printings[0].cardSetName;
 			});
 		}
 	])
 	.controller('SetController', [
-		'$scope', '$location', '$routeParams', '$timeout', 'Search',
-		function($scope, $location, $routeParams, $timeout, Search) {
+		'$scope', '$location', '$routeParams', '$timeout', '$http', 'Search',
+		function($scope, $location, $routeParams, $timeout, $http, Search) {
 			$scope.performSearch = Search;
-			$.get('/json/set/' + $routeParams.setName, function(results) {
+			$http.get('/json/set/' + $routeParams.setName).success(function(results) {
 				$scope.cards = results;
 				$timeout(function() {
 					$location.path('/set/' + $routeParams.setName);

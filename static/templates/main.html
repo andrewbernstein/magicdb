@@ -1,10 +1,10 @@
-<div class="randomCard">
+<div class="randomCard" ng-if="card">
 	<div class="card">
 		<div class="cardprintings">
 			<div class="cardprinting">
 				<div class="cardimage">
 					<a href="#/card/{{card.name}}">
-						<img src="{{ 'https://s3-us-west-2.amazonaws.com/magicdb-cards/' + card.printings[0].id + '.jpg' }}" alt="{{card.name + ' - ' + card.printings[0].cardSetName}} " title="{{ card.name + ' - ' + card.printings[0].cardSetName }}"/>
+						<img src="https://s3-us-west-2.amazonaws.com/magicdb-cards/{{card.printings[0].id}}.jpg" alt="{{card.name + ' - ' + card.printings[0].cardSetName}} " title="{{ card.name + ' - ' + card.printings[0].cardSetName }}"/>
 					</a>
 				</div>
 			</div>
@@ -38,7 +38,7 @@
 	</div>
 </div>
 
-<div class="sets">
+<div class="sets" ng-if="sets != {}">
 	<div ng-repeat="set in sets" class="setname">
 		<a href = '#/set/{{ set["abbreviation"] }}'>
 		{{ set['abbreviation'] + ' - ' + set['name'] }}
