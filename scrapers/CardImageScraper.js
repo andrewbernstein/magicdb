@@ -36,8 +36,9 @@ var scrapeCards = function() {
 						'x-amz-acl': 'public-read'
 					}, function(error, res) {
 						if(error) {
-							console.error(error);
-							return callback(error);
+							console.error(card.id, error);
+							res.resume();
+							callback();
 						}
 						//console.log('knox', res.statusCode, card.id);
 						res.resume();
