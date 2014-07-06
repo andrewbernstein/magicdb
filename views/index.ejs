@@ -1,25 +1,5 @@
 <% include header.ejs %>
 
-<div class="title">
-	Index Page
-	<br />
-</div>
-
-<div class="randomCard">
-	<% var card = randomCard %>
-	<% include card.ejs %>
-</div>
-
-<div class="sets">
-	<% for (var i = 0; i < sets.length; i++) { %>
-		<div class="setname">
-			<a href = '/set/<%= sets[i]['abbreviation'] %>'>
-				<%= sets[i]['abbreviation'] + ' - ' + sets[i]['name'] %>
-			</a>
-		</div>
-	<% } %>
-</div>
-
-
+<div ng-view></div>
 
 <% include footer.ejs %>

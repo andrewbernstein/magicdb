@@ -7,7 +7,7 @@ var formatCardsForMultipleReturn = function(results, callback) {
 		card.printings = [ card.printings[card.printings.length - 1] ];
 		formattedResults.push(card);
 	}
-	callback(formattedResults);
+	callback(null, formattedResults);
 }
 
 var formatResultsForSingleReturn = function(results, callback) {
@@ -19,6 +19,9 @@ var cardSearch = function(query, callback) {
 	MongoService.connect(function(db) {
 		var rawCardsCollection = db.collection('cards');
 		rawCardsCollection.find({ tags: query }).toArray(function(err, results) {
+			if(err) {
+				return callback(err, null);
+			}
 			formatCardsForMultipleReturn(results, callback);
 		})
 	});

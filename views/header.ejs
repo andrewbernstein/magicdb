@@ -1,11 +1,18 @@
-<html>
+<html ng-app="project">
 <head>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular-route.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="/static/js/magicdb-ng.js"></script>
 	<link rel="stylesheet" type="text/css" href="/static/css/magic.css" />
 </head>
 <body>
 <div class="header">
 	<a href="/">Index</a>
-	<a href="/search">Search</a>
 </div>
 <div class="content">
+	<form ng-submit="performSearch()" ng-controller="SearchController">
+		Search:
+		<input type="text" name="query" id="searchquery" ng-model="searchquery" />
+		<input type="submit" name="Search" />
+	</form>

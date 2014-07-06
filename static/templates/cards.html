@@ -1,0 +1,65 @@
+Quick Name Filter: <input ng-model="filterText.name" />
+<select ng-model="colorText.colors">
+	<option value="">Color</option>
+	<option value="white">White</option>
+	<option value="blue">Blue</option>
+	<option value="black">Black</option>
+	<option value="red">Red</option>
+	<option value="green">Green</option>
+</select>
+<select ng-model="filterText.type">
+	<option value="">Type</option>
+	<option value="Creature">Creature</option>
+	<option value="Instant">Instant</option>
+	<option value="Sorcery">Sorcery</option>
+	<option value="Land">Land</option>
+	<option value="Artifact">Artifact</option>
+</select>
+<select ng-model="rarityText.printings.rarity">
+	<option value="">Rarity</option>
+	<option value="Common">Common</option>
+	<option value="Uncommon">Uncommon</option>
+	<option value="Rare">Rare</option>
+	<option value="Mythic">Mythic</option>
+</select>
+<div class="searchResults">
+	<div ng-repeat="card in cards | filter:colorText:colorComparator | filter:rarityText:rarityComparator | filter:filterText" class="card">
+		<div class="carddetail">
+			<div class="cardimageandinfo">
+				<div class="cardprintings">
+					<div class="cardimage">
+						<a href="/#/card/{{ card.name }}">
+							<img src="{{ 'https://s3-us-west-2.amazonaws.com/magicdb-cards/' + card.printings[0].id + '.jpg' }}" alt="{{ card.name + ' - ' + card.printings[0].cardSetName }}" title="{{ card.name + ' - ' + card.printings[0].cardSetName }}" />
+						</a>
+					</div>
+				</div>
+				<div class="cardinfo">
+					<div class="cardattribute">
+						<div class="cardtitle">Name:</div>
+						<div class="cardvalue">{{ card.name }}</div>
+					</div>
+					<div class="cardattribute">
+						<div class="cardtitle">Cost:</div>
+						<div class="cardvalue">{{ card.manaCost }}</div>
+					</div>
+					<div class="cardattribute">
+						<div class="cardtitle">CMC:</div>
+						<div class="cardvalue">{{ card.convertedManaCost }}</div>
+					</div>
+					<div class="cardattribute">
+						<div class="cardtitle">Type:</div>
+						<div class="cardvalue">{{ card.type? card.type: card.types }}</div>
+					</div>
+					<div class="cardattribute">
+						<div class="cardtitle">Text:</div>
+						<div class="cardvalue">{{ card.description }}</div>
+					</div>
+					<div ng-if="card.type.indexOf('Creature') !== -1" class="cardattribute">
+						<div class="cardtitle">P/T:</div>
+						<div class="cardvalue">{{ card.power }} / {{ card.toughness }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

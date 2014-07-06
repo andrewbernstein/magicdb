@@ -17,6 +17,7 @@ body {
 	display: inline-block;
 	margin-right: 10px;
 	margin-bottom: 10px;
+	vertical-align: top;
 }
 
 .carddetail {
@@ -69,6 +70,19 @@ body {
 	margin-left: 8px
 }
 
+.setradio {
+	float: left;
+}
+
+.settitle {
+	float: left;
+	font-weight: bold;
+}
+
+.setvalue {
+	float: left;
+}
+
 .cardinfo {
 	float: left;
 	margin-top: 20px;
@@ -102,4 +116,5 @@ body {
 
 .randomCard {
 	display:inline-block;
+	vertical-align: top;
 }
