@@ -197,15 +197,10 @@ var formatCard = function(card) {
 	//put the name in to the tags
 	var splitName = card.lcaseName.split(' ');
 	for(var nameKey in splitName) {
-		var namePart = splitName[nameKey];
+		var namePart = splitName[nameKey].replace(/[^\w\s]/gi, '');
 
 		//put the base name in to tags
 		card.tags.push(namePart);
-
-		//strip out commas so "Elspeth" ends up in the tags for "Elspeth, Sun's Champion"
-		if(namePart != namePart.replace(/,/g, '')) {
-			card.tags.push(namePart.replace(/,/g, ''));
-		}
 
 		//strip out "'s" out of card names so "serra" will find "Serra's Sanctum"
 		if(namePart != namePart.replace(/'s/g, '')) {
