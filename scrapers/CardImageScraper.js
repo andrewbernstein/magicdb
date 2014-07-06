@@ -17,6 +17,7 @@ var s3 = knox.createClient({
 });
 
 var scrapers = [];
+var cardHost = 'http://api.mtgdb.info/content/card_images/';
 
 var scrapeCards = function() {
 	var cards = require('../' + config.functions.cardFile);
@@ -25,7 +26,7 @@ var scrapeCards = function() {
 		var card = cards[cKey];
 		(function(card) {
 			scrapers.push(function(callback) {
-				var url = config.images.baseUrl + card.id + '.jpeg';
+				var url = cardHost + card.id + '.jpeg';
 				console.log('getting url', url);
 				http.get(url, function (res) {
 					//console.log('request', res.statusCode, card.id);
