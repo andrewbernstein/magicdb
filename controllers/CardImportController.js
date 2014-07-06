@@ -223,10 +223,12 @@ var formatCard = function(card) {
 
 	//if the description contains an ability, push it in to the tags
 	var abilities = Keywords.getAbilities();
+	card.abilities = [];
 	for(var aKey in abilities) {
 		var ability = abilities[aKey].toLowerCase();
 		if(card.lcaseDescription.indexOf(ability) != -1) {
 			card.tags.push(ability);
+			card.abilities.push(ability);
 		}
 	}
 
