@@ -1,5 +1,29 @@
+Quick Name Filter: <input ng-model="filterText.name" />
+<select ng-model="colorText.colors">
+	<option value="">Color</option>
+	<option value="white">White</option>
+	<option value="blue">Blue</option>
+	<option value="black">Black</option>
+	<option value="red">Red</option>
+	<option value="green">Green</option>
+</select>
+<select ng-model="filterText.type">
+	<option value="">Type</option>
+	<option value="Creature">Creature</option>
+	<option value="Instant">Instant</option>
+	<option value="Sorcery">Sorcery</option>
+	<option value="Land">Land</option>
+	<option value="Artifact">Artifact</option>
+</select>
+<select ng-model="rarityText.printings.rarity">
+	<option value="">Rarity</option>
+	<option value="Common">Common</option>
+	<option value="Uncommon">Uncommon</option>
+	<option value="Rare">Rare</option>
+	<option value="Mythic">Mythic</option>
+</select>
 <div class="searchResults">
-	<div ng-repeat="card in cards" class="card">
+	<div ng-repeat="card in cards | filter:colorText:colorComparator | filter:rarityText:rarityComparator | filter:filterText" class="card">
 		<div class="carddetail">
 			<div class="cardimageandinfo">
 				<div class="cardprintings">
