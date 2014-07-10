@@ -200,6 +200,10 @@ var formatCard = function(card) {
 	//start assembling the tags
 	card.tags = [];
 
+	//push the name in to the tags
+	card.tags.push(card.name);
+	card.tags.push(card.lcaseName);
+
 	//put the name in to the tags
 	var splitName = card.lcaseName.split(' ');
 	for(var nameKey in splitName) {
