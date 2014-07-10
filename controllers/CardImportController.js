@@ -46,6 +46,7 @@ var importCards = function() {
 							//if we haven't seen this set before, insert it in to the database
 							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
 								if(err) {
+									console.error(card);
 									console.error('upsert set error', err);
 									return callback(err);
 								}
@@ -66,7 +67,7 @@ var importCards = function() {
 							//set up a general callback for counting results to be used in both cases below
 							var theCallback = function(err, results) {
 								if(err) {
-									console.log(card);
+									console.error(card);
 									console.error('upsert card callback error', err);
 									return callback(err);
 								}
@@ -79,6 +80,7 @@ var importCards = function() {
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
 							cardsCollection.findOne({ name: card.name }, function(err, results) {
 								if(err) {
+									console.error(card);
 									console.error('upsert card error', err);
 									return callback(err);
 								}
@@ -175,6 +177,10 @@ var updateSetAbbreviation = function(printing) {
 }
 
 var formatCard = function(card) {
+	if(!card.name || !card.type || (!card.description && card.description != '')) {
+		console.error(card);
+	}
+
 	//lowercase the name, type, description, and rarity for easier searching
 	card.lcaseName = card.name.toLowerCase();
 	card.lcaseType = card.type.toLowerCase();
@@ -233,7 +239,9 @@ var formatCard = function(card) {
 	}
 
 	//add the manacost to tags
-	card.tags.push(card.manaCost.toLowerCase());
+	if(card.manaCost) {
+		card.tags.push(card.manaCost.toLowerCase());
+	}
 
 	//add the colors of the card to tags
 	for(var cKey in card.colors) {
