@@ -46,6 +46,10 @@
 				<div class="cardtitle">P/T:</div>
 				<div class="cardvalue">{{ card.power }} / {{ card.toughness }}</div>
 			</div>
+			<div ng-if="card.type.indexOf('Planeswalker') !== -1" class="cardattribute">
+				<div class="cardtitle">Loyalty:</div>
+				<div class="cardvalue">{{ card.loyalty }}</div>
+			</div>
 		</div>
 	</div>
 	<div class="cardprintinglist">

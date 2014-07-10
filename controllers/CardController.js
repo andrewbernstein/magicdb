@@ -11,7 +11,8 @@ var standardIncludes = {
 	power: 1,
 	toughness: 1,
 	printings: 1,
-	colors: 1
+	colors: 1,
+	loyalty: 1
 };
 
 //cloning the standard includes and adding a printings elemMatch for getting cards that match a given printing set
