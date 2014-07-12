@@ -15,10 +15,14 @@ var formatResultsForSingleReturn = function(results, callback) {
 }
 
 var cardSearch = function(query, callback) {
-	console.log(query);
 	MongoService.connect(function(db) {
+		var queryParts = query.split(' ');
+		var dbQuery = [];
+		for(var qKey in queryParts) {
+			dbQuery.push({tags: queryParts[qKey]});
+		}
 		var rawCardsCollection = db.collection('cards');
-		rawCardsCollection.find({ tags: query }).toArray(function(err, results) {
+		rawCardsCollection.find({$and: dbQuery}).toArray(function(err, results) {
 			if(err) {
 				return callback(err, null);
 			}
