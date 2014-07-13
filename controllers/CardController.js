@@ -1,4 +1,5 @@
 var MongoService = require('../services/MongoService');
+var utility = require('../services/UtilityService');
 
 //a set of standard include card values to return from the database for explicitness
 var standardIncludes = {
@@ -52,19 +53,13 @@ exports.getSet = getSet;
 var getRandomCard = function(callback) {
 	MongoService.connect(function(db) {
 		var cardsCollection = db.collection('cards');
-		var random = Math.random();
-		console.log(random);
+		var random = utility.getCardRandom();
 
-		result = cardsCollection.findOne({ random : { $gte : random } }, standardIncludes, function(err, results) {
-			if(!results) {
-				cardsCollection.findOne({ random: { $lte: random }}, standardIncludes, function(err, results) {
-					callback(err, results);
-				});
-			}
-			else {
-				callback(err, results);
-			}
-		});
+		var randomCount = cardsCollection.count({ random: random }, function(err, count) {
+			var skip = count * Math.random();
+			console.log('random', random, skip);
+			var result = cardsCollection.find({ random: random }, standardIncludes).skip(skip).nextObject(callback);
+		})
 	});
 };
 exports.getRandomCard = getRandomCard;

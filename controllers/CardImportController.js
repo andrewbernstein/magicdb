@@ -1,5 +1,6 @@
 var MongoService = require('./../services/MongoService');
 var config = require('config');
+var utility = require('./../services/UtilityService');
 var Keywords = require('./KeywordsController');
 var async = require('async');
 
@@ -187,8 +188,14 @@ var formatCard = function(card) {
 	card.lcaseDescription = card.description.toLowerCase();
 
 	//add a random field for getting a random card from the database
-	//idea is from http://stackoverflow.com/questions/2824157/random-record-from-mongodb (second solution)
-	card.random = Math.random();
+	card.random = utility.getCardRandom();
+
+	//start assembling the tags
+	card.tags = [];
+
+	//add the set name and id to the tags
+	card.tags.push(card.cardSetId.toLowerCase());
+	card.tags.push(card.cardSetName.toLowerCase());
 
 	//pull out values that are not unique to this printing of the card and put them in arrays
 	card.printings = [];
@@ -196,9 +203,6 @@ var formatCard = function(card) {
 	var printing = getPrinting(card);
 	card.printings.push(printing);
 	deletePrintingInformation(card);
-
-	//start assembling the tags
-	card.tags = [];
 
 	//push the name in to the tags
 	card.tags.push(card.name);
