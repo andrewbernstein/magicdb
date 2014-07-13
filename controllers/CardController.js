@@ -55,9 +55,9 @@ var getRandomCard = function(callback) {
 		var cardsCollection = db.collection('cards');
 		var random = utility.getCardRandom();
 
-		var randomCount = cardsCollection.count({ random: random }, function(err, count) {
-			var skip = count * Math.random();
-			console.log('random', random, skip);
+		cardsCollection.count({ random: random }, function(err, count) {
+			var skip = Math.floor(count * Math.random());
+			console.log('random', random, count, skip);
 			var result = cardsCollection.find({ random: random }, standardIncludes).skip(skip).nextObject(callback);
 		})
 	});
