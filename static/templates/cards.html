@@ -22,6 +22,12 @@ Quick Name Filter: <input ng-model="filterText.name" />
 	<option value="Rare">Rare</option>
 	<option value="Mythic">Mythic</option>
 </select>
+<br />
+Card Display:
+<select ng-model="cardDisplay">
+	<option value="">Image Only</option>
+	<option value="true">Full Card Text</option>
+</select>
 <div class="searchResults">
 	<div ng-repeat="card in cards | filter:colorText:colorComparator | filter:rarityText:rarityComparator | filter:filterText" class="card">
 		<div class="carddetail">
@@ -33,7 +39,7 @@ Quick Name Filter: <input ng-model="filterText.name" />
 						</a>
 					</div>
 				</div>
-				<div class="cardinfo">
+				<div ng-if="cardDisplay" class="cardinfo">
 					<div class="cardattribute">
 						<div class="cardtitle">Name:</div>
 						<div class="cardvalue">{{ card.name }}</div>
