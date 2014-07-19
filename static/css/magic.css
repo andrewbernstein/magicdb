@@ -118,3 +118,9 @@ body {
 	display:inline-block;
 	vertical-align: top;
 }
+
+.footer {
+	text-align: center;
+	color: #888;
+	font-size: 10px;
+}
