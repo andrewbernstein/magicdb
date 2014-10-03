@@ -50,7 +50,7 @@ angular.module('project', [ 'ngRoute' ])
 	.factory('RarityComparator', function() {
 		return function(actual, expected) {
 			//we have to check inside the printings of the card to see if
-			if(!expected) {
+			if(!expected || !expected.rarity) {
 				return true;
 			}
 			var res = false;
