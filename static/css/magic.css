@@ -52,6 +52,11 @@ body {
 	margin-left: 37px;
 }
 
+.cardimage img {
+	height: 311px;
+	width: 226px;
+}
+
 .cardprintingattribute {
 	width: 300px;
 	position: relative;
