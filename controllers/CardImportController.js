@@ -45,6 +45,7 @@ var importCards = function() {
 					async.series([
 						function(callback) {
 							//if we haven't seen this set before, insert it in to the database
+							var setsCollection = db.collection('sets');
 							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
 								if(err) {
 									console.error(card);
@@ -62,6 +63,7 @@ var importCards = function() {
 						},
 						function(callback) {
 							//add/update card to the raw card collection
+							var rawCardsCollection = db.collection('rawCards');
 							insertRawCard(rawCardsCollection, card, callback);
 						},
 						function(callback) {
@@ -79,6 +81,7 @@ var importCards = function() {
 							};
 
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
+							var cardsCollection = db.collection('cards');
 							cardsCollection.findOne({ name: card.name }, function(err, results) {
 								if(err) {
 									console.error(card);
@@ -194,6 +197,16 @@ var formatCard = function(card) {
 	card.tags = [];
 
 	//add the set name and id to the tags
+	if(!card.cardSetId) {
+		var setNames = Keywords.getSetNames();
+		if(setNames[card.cardSetName]) {
+			card.cardSetId = setNames[card.cardSetName];
+		}
+		else {
+			console.error('unknown card set!', card);
+			card.cardSetId = 'UNKNOWN';
+		}
+	}
 	card.tags.push(card.cardSetId.toLowerCase());
 	card.tags.push(card.cardSetName.toLowerCase());
 
