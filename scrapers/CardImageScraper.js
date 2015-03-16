@@ -18,6 +18,7 @@ var scrapers = [];
 var cardHost = 'http://api.mtgdb.info/content/card_images/';
 var hiResCardHost = 'http://api.mtgdb.info/content/hi_res_card_images/';
 var startId = -1;
+//las successful import: 391941
 
 var scrapeCards = function() {
 	var cards = require('../' + config.functions.cardFile);
