@@ -44,9 +44,11 @@ var importCards = function() {
 					//as it turns out, the steps below are independent of each other, so we can do them in parallel!
 					async.series([
 						function(callback) {
+
+							var cardSetId = getCardSetId(card);
+							var releasedAt = getCardReleasedAt(card);
 							//if we haven't seen this set before, insert it in to the database
-							var setsCollection = db.collection('sets');
-							setsCollection.findOne({ abbreviation: card.cardSetId }, function(err, results) {
+							setsCollection.findOne({ abbreviation: cardSetId }, function(err, results) {
 								if(err) {
 									console.error(card);
 									console.error('upsert set error', err);
@@ -54,7 +56,7 @@ var importCards = function() {
 								}
 
 								if(!results) {
-									upsertSet(setsCollection, card.cardSetName, card.cardSetId, card.releasedAt, callback);
+									upsertSet(setsCollection, card.cardSetName, cardSetId, releasedAt, callback);
 								}
 								else {
 									callback();
@@ -63,10 +65,10 @@ var importCards = function() {
 						},
 						function(callback) {
 							//add/update card to the raw card collection
-							var rawCardsCollection = db.collection('rawCards');
 							insertRawCard(rawCardsCollection, card, callback);
 						},
 						function(callback) {
+							formatCard(card);
 							//set up a general callback for counting results to be used in both cases below
 							var theCallback = function(err, results) {
 								if(err) {
@@ -81,7 +83,6 @@ var importCards = function() {
 							};
 
 							//if we haven't seen this card before (same name is same card), upsert the base card in to the db
-							var cardsCollection = db.collection('cards');
 							cardsCollection.findOne({ name: card.name }, function(err, results) {
 								if(err) {
 									console.error(card);
@@ -115,7 +116,6 @@ var importCards = function() {
 exports.importCards = importCards;
 
 var upsertCard = function(dbCollection, card, callback) {
-	formatCard(card);
 	if(card._id) {
 		delete card._id;
 	}
@@ -197,17 +197,8 @@ var formatCard = function(card) {
 	card.tags = [];
 
 	//add the set name and id to the tags
-	if(!card.cardSetId) {
-		var setNames = Keywords.getSetNames();
-		if(setNames[card.cardSetName]) {
-			card.cardSetId = setNames[card.cardSetName];
-		}
-		else {
-			console.error('unknown card set!', card);
-			card.cardSetId = 'UNKNOWN';
-		}
-	}
-	card.tags.push(card.cardSetId.toLowerCase());
+	var cardSetId = getCardSetId(card);
+	card.tags.push(cardSetId.toLowerCase());
 	card.tags.push(card.cardSetName.toLowerCase());
 
 	//pull out values that are not unique to this printing of the card and put them in arrays
@@ -268,4 +259,32 @@ var formatCard = function(card) {
 	for(var cKey in card.colors) {
 		card.tags.push(card.colors[cKey].toLowerCase());
 	}
+}
+
+var getCardSetId = function(card) {
+	if(!card.cardSetId) {
+		//console.error(card.id, card.cardSetName);
+		var setNames = Keywords.getSetNames();
+		if(setNames[card.cardSetName]) {
+			card.cardSetId = setNames[card.cardSetName];
+		}
+		else {
+			console.error('unknown card set!', card);
+			card.cardSetId = 'UNKNOWN';
+		}
+	}
+
+	return card.cardSetId;
+}
+
+var getCardReleasedAt = function(card) {
+	if(!card.releasedAt) {
+		if(card.cardSetId == 'C14') {
+			card.releasedAt = '2014-11-07';
+		}
+		if(card.cardSetId == 'V14') {
+			card.releasedAt = '2014-08-22';
+		}
+	}
+	return card.releasedAt;
 }
